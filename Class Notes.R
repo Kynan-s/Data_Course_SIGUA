@@ -385,3 +385,74 @@ penguins%>%
 
 ggsave()
 
+
+
+
+
+
+## Look at penguin data
+## think about what graph you want to make 
+## make a graph
+
+library(palmerpenguins)
+library(ggplot2)
+
+# check rows
+head(penguins)
+
+penguins %>%
+  drop_na() %>%
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             color = island,
+             shape = sex)) + #aesthetic
+  geom_point()
+
+ggsave("penguin_plot.png")
+
+penguins %>%
+  ggplot(aes(x = body_mass_g,
+             fill = species)) + 
+  geom_density(alpha = 0.2, linetype = 'dashed')
+
+
+penguins %>%
+  ggplot(aes(x = body_mass_g,
+             y = bill_length_mm,
+             color = island,
+             shape = species)) + 
+  geom_point(alpha = 3, size = 3)
+
+
+
+
+
+
+
+## make a bar chart to show average weight
+
+
+penguins %>%
+  drop_na(sex) %>%
+  group_by(species) %>%
+  summarize(avg_mass = mean(body_mass_g, na.rm = T)) %>%
+  ggplot(aes(x = species, y = avg_mass, color = species)) +
+  geom_col()
+
+penguins %>%
+  drop_na(sex) %>%
+  group_by(species) %>%
+  summarize(avg_mass = mean(body_mass_g, na.rm = T),
+            sd = sd(body_mass_g)) %>%
+  ggplot(aes(x = species,
+             y = avg_mass,
+             color = species)) +
+  geom_bar(stat = 'identity') +
+  geom_errorbar(aes(ymin = avg_mass - sd,
+                    ymax = avg_mass + sd))
+
+
+
+
+
+    
