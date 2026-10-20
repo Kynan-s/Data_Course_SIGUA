@@ -36,3 +36,19 @@ big_area_iris = iris[iris$Sepal.Area > 20, ]
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -455,4 +455,227 @@ penguins %>%
 
 
 
+## make a graph using penguin data
+## try to use a new geom_
+## overlap at least two geom_
+## add title for the plot
+## bonus: adjust title, axis, or other labels
+
+
+library(tidyverse)
+library(ggplot2)
+library(palmerpenguins)
+
+penguins %>%
+  drop_na(sex) %>%
+  group_by(island) %>%
+  summarize(max_mass = max(body_mass_g, na.rm = T)) %>%
+  ggplot(aes(x = island,
+         y = max_mass,
+         color = island,
+         group = 1)) +
+  geom_violin(aes(fill = island), alpha = 0.4) +
+  geom_point(size = 4) +
+  labs(
+    title = "Penguins Max Mass",
+    x = "Island",
+    y = "Max Mass"
+  ) +
+  theme_minimal()
+
+
+penguins %>%
+  drop_na(sex) %>%
+  ggplot(aes(x = body_mass_g,
+             y = bill_length_mm,
+             color = species)) +
+  geom_point() +
+  geom_path() +
+  geom_line() +
+  stat_ellipse() +
+  labs( 
+    title = "Penguin",
+    x = "Body Mass",
+    y = "Bill Length",
+    color = "Species") +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+
+
+penguins %>%
+  drop_na(sex) %>%
+  ggplot(aes(x = body_mass_g,
+             y = bill_length_mm,
+             color = species)) +
+  geom_violin() +
+  geom_boxplot() +
+  geom_point() +
+  stat_ellipse()
+
+
+
+
+install.packages(patchwork)
+library(patchwork)
+p3 = p2 (theme_dark())
+
+p1 + p2
+
+
+read.delim('Data_Course_SIGUA/Data/DatasaurusDozen.tsv')
+read.csv('Data_Course_SIGUA/Data/DatasaurusDozen.tsv')
+
+df_dino = read.delim('Data_Course_SIGUA/Data/DatasaurusDozen.tsv')
+
+head(df_dino)
+
+df_dino %>%
+  ggplot(aes(x = x,
+             y = y,
+             color = dataset)) +
+  geom_point() +
+  geom_boxplot(alpha = 0) +
+  geom_violin(alpha = 0) +
+  stat_ellipse(size = 1)
+
+
+
+penguins %>%
+  drop_na(sex) %>%
+  group_by(species) %>%
+  summarise(avg_weight = round(mean(body_mass_g),2)) %>%
+  ggplot(aes(x = species,
+             y = avg_weight)) +
+  geom_col() +
+  geom_text(aes(label = avg_weight))
+
+
+
+
+
+df_dino = read.delim('Data_Course_SIGUA/Data/DatasaurusDozen.tsv')
+
+head(df_dino)
+range(df_dino$x)
+
+
+df_dino %>%
+  drop_na(dataset) %>%
+  group_by(dataset) %>%
+  summarise(avg_x = mean(x),
+            avg_y = mean(y),
+            med_x = median(x),
+            med_y = median(y),
+            max_x = max(x),
+            max_y = max(y),
+            min_x = min(x),
+            min_y = min(y))
+
+
+
+## package GGally
+library(GGally)
+ggpairs(penguins)
+
+head(penguins)
+
+
+penguins %>%
+  drop_na(sex) %>%
+  group_by(species) %>%
+  ggplot(aes(x = bill_depth_mm,
+             y = body_mass_g,
+             color = sex
+             )) +
+  geom_point(size = 4, alpha = .5) +
+  facet_wrap(~ species) +
+  scale_color_manual(values = c('female' = 'darkorchid', 'male' = 'chartreuse')) +
+  labs(x = "Bill depth (mm)",
+    y = "Body mass (g)",
+    color = "Sex") +
+  theme_bw() + 
+  theme(strip.background = element_blank(),
+       strip.text = element_text(face = 'bold', size = 15),
+       axis.title = element_text(face = 'bold', size = 15))
+
+
+
+# install gapminder, gganimate, gifski, av
+# take a look of gapminder and make some cool graph
+
+install.packages("gapminder")
+install.packages("gganimate")
+install.packages("gifski")
+install.packages("av")
+
+library(gapminder)
+library(gganimate)
+library(gifski)
+library(tidyverse)
+library(av)
+
+
+View(gapminder)
+
+gapminder %>%
+  drop_na(continent) %>%
+  group_by(year) %>%
+  summarize(avg_life = round(mean(lifeExp), 2), .groups = "drop") %>%
+  ggplot(aes(x = country,
+             y = avg_life,
+             color = continent)) +
+  geom_col()
+
+gapminder %>%
+  drop_na(continent) %>%
+  group_by(year, continent) %>%
+  summarize(avg_life = round(mean(lifeExp), 2), .groups = "drop") %>%
+  ggplot(aes(x = year, y = avg_life, fill = continent)) +
+  geom_col(position = "dodge")
+
+
+
+
+names(gapminder)
+View(gapminder)
+unique(gapminder$country)
+unique(gapminder$continent)
+unique(gapminder$year)
+range(gapminder$year)
+
+gapminder %>%
+  ggplot(aes(x = lifeExp,
+             y = gdpPercap,
+             color = continent)) +
+  geom_point(aes(size = pop)) +
+  facet_wrap(~ continent)
+
+ggsave('file.png')
+
+
+gapminder %>%
+  ggplot(aes(x = lifeExp,
+             y = pop,
+             color = continent)) +
+  geom_point(aes(size = pop)) +
+  facet_wrap(~ continent) +
+  labs(title = '{frame_time}') +
+  geom_text(aes(label = country), vjust = 2) +
+  transition_time(time = year)
+
+anim_save('anim_plot.gif')
+
+my_country = c('United States', 'China', 'India', 'Japan', 'France', 'South Africa', 'New Zealand')
+
+gapminder %>%
+  mutate(my_label = case_when(country %in% my_country ~ country)) %>%
+  ggplot(aes(x = lifeExp,
+             y = pop,
+             color = continent)) +
+  geom_point(aes(size = pop)) +
+  facet_wrap(~ continent) +
+  labs(title = '{frame_time}') +
+  geom_text(aes(label = my_label), vjust = 2) +
+  transition_time(time = year)
+  
     
