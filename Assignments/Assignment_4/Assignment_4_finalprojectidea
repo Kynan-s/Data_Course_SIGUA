@@ -1,0 +1,21 @@
+Final Project Idea
+Kynan Sigua – BIOL 3100
+1. PROJECT IDEA
+What question am I trying to answer? Which county factors best predict diabetes rates in the United States?
+Why does it matter? Hospitals, health departments, and prevention programs could use this information to find areas that might need more diabetes prevention resources.
+What makes it interesting to me? It would be interesting to see if Utah counties have lower or higher diabetes rates than other parts of the country. Also I could find out what factors are related to diabetes. 
+2. THE DATA
+Name and source: CDC PLACES County Data (2025 release), from data.gov.
+Where it comes from: The CDC uses health survey data from the Behavioral Risk Factor Surveillance System (BRFSS) to estimate health measures for local communities.
+Other possible sources I might add: U.S. Census data on income and poverty, and USDA data on food access.
+3. WHAT THE DATA LOOKS LIKE
+Rows: Approximately 3,000 U.S. counties.
+Columns: State, county, population, and percentages of adults with different health conditions and behaviors.
+Main columns I'll use:
+DIABETES_CrudePrev — the diabetes rate I want to predict.
+OBESITY_CrudePrev — obesity rate.
+LPA_CrudePrev — rate of physical inactivity.
+Other measures, such as high blood pressure and income, if available.
+4. EXPECTED RESULT
+What I think I'll find: Counties with higher obesity and physical inactivity rates will generally have higher diabetes rates. Income and other community factors may also help explain differences between counties.
+Plot: expected_result.png — a scatterplot showing the relationship between county obesity rates and diabetes rates.
