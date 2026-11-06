@@ -685,4 +685,468 @@ gapminder %>%
   geom_text(aes(label = my_label), vjust = 2) +
   transition_time(time = year)
   
+
+View(penguins)
+
+## read 'wide_income_rent.csv' using relative path
+## compare data structure with penguins data
+## make a graph
+
+df = read.csv('Data/wide_income_rent.csv')
+View(df)
+
+df2 = t(df)
+View(df2)
+df3 = df2[-1, ]
+View(df3)
+
+str(df3)
+
+df3 = as.data.frame(df3)
+str(df3)
+names(df3) = c('income', 'rent')
+df3$state = rownames(df3)
+
+df3 %>% 
+  ggplot(aes(x = income, y = rent)) +
+  geom_point() +
+  geom_text(aes(label = state))
+
+
+df = data.frame(
+  id = c(1,2,3,4,5),
+  height = c(120, 130, 145, 155, 170),
+  weight = c(34, 55, 70, 80, 100),
+  score = c(22, 33, 44, 55, 66)
+)
+
+df_long = df %>% 
+  pivot_longer(cols = c(height, weight),
+               names_to = 'type',
+               values_to = 'measurement') 
+df_long %>% 
+  pivot_wider(names_from = type,
+              values_from = measurement)
+## practice pivot_longer and pivot_wider
+## make 'wide_income_rent.csv' tidy
+
+
+df %>% 
+  pivot_longer(cols = height,
+               names_to = 'type',
+               values_to = 'measurement')
+
+df %>% 
+  pivot_longer(cols = c(height, score),
+               names_to = 'type',
+               values_to = 'measurement')
+
+
+df %>% 
+  pivot_longer(-id,
+               names_to = 'type')
+
+
+df %>% 
+  pivot_longer(cols = everything(),
+               names_to = 'type',
+               values_to = 'measurement')
+
+
+
+View(df)
+
+df %>% 
+  pivot_longer(-variable,
+               names_to = 'state') %>% 
+  pivot_wider(names_from = variable,
+              values_from = value) %>% View()
+
+
+table1
+table2
+
+
+## take a look table1 (good format)
+## make table2 tidy
+
+table2 %>% 
+  pivot_wider(names_from = type,
+              values_from = count)
+
+
+table3
+?separate
+
+table3 %>% 
+  separate(rate, into = c('cases', 'pop'))
+
+
+table3 %>% 
+  separate(rate, into = c('cases', 'pop'), convert = T)
+
+
+table4a
+table4b
+
+merge()
+join_by()
+full_join()
+
+full_join(x, y)
+
+
+
+table4a
+table4b
+table1
+table2
+table3
+
+## make table 4a&b tidy
+
+merge()
+join_by()
+full_join()
+
+full_join(x, y)
+
+x = table4a %>% 
+  pivot_longer(-country,
+               names_to = 'year',
+               values_to = 'cases')
+
+y = table4b %>% 
+  pivot_longer(-country,
+               names_to = 'year',
+               values_to = 'population')
+
+
+full_join(x, y)
+
+x %>% 
+  full_join(y) 
+
+
+table5
+
+## make it tidy
+
+str(merge(table5$century, table5$year))
+paste('19', '00')
+paste('19', '00', sep = '/')
+paste0('19', '00')
+unite('19', '00')
+
+
+paste(table5$century, table5$year, sep = '')
+paste0(table5$century, table5$year)
+
+df <- expand_grid(x = c("a", NA), y = c("b", NA))
+df
+
+df %>% unite("z", x:y, remove = FALSE, sep = '')
+
+
+table5 %>% 
+  mutate(year = as.numeric(paste0(table5$century, table5$year))) %>% 
+  select(-century)
+
+table5 %>% 
+  mutate(year = paste0(table5$century, table5$year) %>% as.numeric()) %>% 
+  select(-century) %>% 
+  separate(rate, into = c('cases', 'population'), convert = T)
+
+
+read.csv()
+
+library(readxl)
+df = read_xlsx('/Users/yu-yaliang/Desktop/Data_Course_LASTNAME/Worst Data Storage Ever.xlsx',
+               sheet = 3)
+View(df)
+
+df = read_xlsx('/Users/yu-yaliang/Desktop/Data_Course_LASTNAME/Worst Data Storage Ever.xlsx',
+               skip = 17)
+View(df)
+
+df = read_xlsx('/Users/yu-yaliang/Desktop/Data_Course_LASTNAME/Worst Data Storage Ever.xlsx',
+               range = 'E18:F21')
+View(df)
+
+names(penguins) = c()
+
+library(janitor)
+make_clean_names('# of bacteria')
+make_clean_names('% of bacteria')
+make_clean_names('# & % of bacteria')
+
+clean_names()
+
+df = read_xlsx('/Users/yu-yaliang/Desktop/Data_Course_LASTNAME/Worst Data Storage Ever.xlsx',
+               sheet = 2 ,range = 'B1:G10')
+View(df)
+
+names(df)
+
+
+df %>% 
+  clean_names()
+
+
+
+library(tidyverse)
+library(readxl)
+read_excel('Data/messy_bp.xlsx')
+
+df = read_xlsx('Data/messy_bp.xlsx', skip = 3)
+read.csv('', skip = )
+
+view(df)
+
+## 1. combine month, day, year
+
+df %>%
+  unite("Date",'Month of birth', 'Day birth', 'Year birth', sep = "-")
+
+
+
+
+install.packages("janitor")
+library(tidyverse)
+library(janitor)
+
+
+bp_long <- df %>%
+  clean_names() %>%
+  mutate(birthday = paste(month_of_birth, day_birth, year_birth, sep = "-")) %>%
+  select(-month_of_birth, -day_birth, -year_birth) %>%
+  select(-starts_with("hr")) %>%
+  pivot_longer(cols = starts_with("bp"),
+               names_to = "visit",
+               values_to = "bp") %>%
+  mutate(visit = case_when(visit == "bp_8"  ~ "1",
+                           visit == "bp_10" ~ "2",
+                           visit == "bp_12" ~ "3")) %>%
+  separate(bp, into = c("sys", "dia"), convert = TRUE) %>%
+  pivot_longer(cols = c("sys", "dia"),
+               names_to = "bp_type",
+               values_to = "measurement")
+
+
+hr_long = df %>%
+  clean_names() %>%
+  mutate(birthday = paste(month_of_birth, day_birth, year_birth, sep = "-")) %>%
+  select(-month_of_birth, -day_birth, -year_birth) %>%
+  select(-starts_with("bp")) %>%
+  pivot_longer(cols = starts_with('hr'),
+               names_to = 'visit',
+               values_to = 'hr') %>%
+  mutate(visit = case_when(visit == 'hr_9' ~ '1',
+                           visit == 'hr_11' ~ '2',
+                           visit == 'hr_13' ~ '3'))
+
+df_clean = full_join(bp_long, hr_long)
+View(df_clean)
+
+df_clean2 = df_clean %>%
+  mutate(race = case_when(race == 'Caucasian' | race == 'White' ~ 'WHITE,
+                           TRUE ~ race'))
+View(df_clean2)
+
+library(ggplot2)
+
+
+df_clean %>%
+  ggplot(aes(x = visit,
+             y = hr,
+             group = pat_id)) +
+  geom_point() +
+  geom_line()
+
+df_clean %>%
+  filter(bp_type == "sys") %>%
+  ggplot(aes(x = visit, y = hr, group = pat_id)) +
+  geom_point() +
+  geom_line()
+
+  # you can also use ends_with() when selecting things
+
+
+df_clean2 %>%
+  ggplot(aes(x = visit,
+             y = hr,
+             color = race)) +
+  geom_path() +
+  facet_wrap(~ race)
+
+
+
+str_to_lower()
+str_to_upper()
+str_remove()
+
+## read Bird_Measurement.csv
+## How to start analysis
+
+install.packages('skimr')
+library(skimr)
+library(tidyverse)
+
+df_bird = read.csv('Data/Bird_Measurements.csv')
+View(df_bird)
+skim(df_bird)
+
+bird_s = skim(df_bird)
+View(bird_s)
+
+keep = bird_s %>%
+  filter(complete_rate > 0.50) %>%
+  pluck('skim_variable')
     
+View(keep)
+
+df_m = df_bird %>%
+  select(keep, "F_tarsus") %>% 
+  select(keep, starts_with('M_')) %>%
+  
+df_m = df_m %>%
+  select(-starts_with('F_')) %>%
+  mutate(sex = 'male')
+  
+df_fm = df_bird %>%
+  select(keep, "F_tarsus") %>%
+  select(keep, starts_with('F_')) %>%
+  
+df_fm %>%
+  select(-starts_with('F_')) %>%
+  mutate(sex = 'male')
+  
+names(df_m) = names(df_m) %>% str_remove('M_')
+names(df_fm) = names(df_fm) %>% str_remove('F_')
+
+identical(names(df_m), names(df_f))
+
+full_join(df_m, df_fm)
+
+
+######-----------
+
+library(tidyverse)
+library(skimr)
+
+df_bird = read.csv('Data/Bird_Measurements.csv')
+
+bird_s = skim(df_bird)
+
+keep = bird_s %>%
+  filter(complete_rate > 0.50) %>%
+  pull(skim_variable)
+
+# Males: keep good columns, drop female columns
+df_m = df_bird %>%
+  select(all_of(keep), any_of(c("M_tarsus", "F_tarsus"))) %>%
+  select(-starts_with('F_')) %>%
+  mutate(sex = 'male')
+
+# Females: keep good columns, drop male columns
+df_f = df_bird %>%
+  select(all_of(keep), any_of(c("M_tarsus", "F_tarsus"))) %>%
+  select(-starts_with('M_')) %>%
+  mutate(sex = 'female')
+
+names(df_m) = names(df_m) %>% str_remove('M_')
+names(df_f) = names(df_f) %>% str_remove('F_')
+
+identical(names(df_m), names(df_f))   # should be TRUE
+
+df_long = bind_rows(df_m, df_f)
+
+View(df_long)
+
+names(df_long)
+
+df_long %>%
+  ggplot(aes(x = Egg_mass,
+             y = mass,
+             color = sex)) +
+  geom_point() +
+  geom_line()
+
+
+
+
+penguins %>%
+  ggplot(aes(x = body_mass, 
+             fill = species)) + 
+  geom_density(alpha = 0.5)
+
+penguins %>%
+  ggplot(aes(x = body_mass, 
+             fill = sex)) + 
+  geom_density(alpha = 0.5)
+
+t.test()
+?t.test()
+
+t.test(body_mass ~ sex, data = penguins)
+
+aov1 = aov(formula = body_mass ~ species,
+    data = penguins)
+
+summary(aov1)
+
+glm()
+
+glm1 = glm(formula = body_mass ~ species,
+           data = penguins)
+
+summary(glm1)
+
+
+avg_body_mass = mean(penguins$body_mass, na.rm = T)
+
+t.test(avg_body_mass ~ sex, data = penguins)
+
+names(penguins)
+
+
+penguins %>%
+  group_by(species) %>%
+  summarise(avg_mass = mean(body_mass, na.rm = T))
+
+
+relevel()
+penguins$species = relevil(penguins$species, ref = 'Gentoo')
+mod2 = 
+  
+  
+  
+  
+  
+install.packages("easystats")
+library(easystats)
+
+# using 'mpg'
+# does engine displacement (displ) affect cty? how much?
+  
+View(mpg)
+
+glm10 = glm(formula = cty ~ displ,
+           data = mpg)
+
+summary(glm10)
+report(glm10)
+performance(glm10)
+
+
+mpg %>%
+  ggplot(aes(x = displ,
+             y = cty)) +
+  geom_point() +
+  geom_smooth(method = 'lm') + 
+  annotate(geom = 'text',
+           x = 6, y = 30,
+           label = 'R^2 = 0.64') +
+  scale_x_continuous(limits = c(0,8), expand = c(0,0))
+
+dat_car = 
