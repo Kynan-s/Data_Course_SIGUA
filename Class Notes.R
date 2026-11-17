@@ -1150,3 +1150,143 @@ mpg %>%
   scale_x_continuous(limits = c(0,8), expand = c(0,0))
 
 dat_car = 
+  
+  
+  
+## build a model to predict cyy
+  
+  
+install.packages("easystats")
+library(easystats)  
+library(ggplot2)
+library(tidyverse)
+
+View(mpg)
+
+mpg %>%
+  select(displ, cty, year, cyl, hwy) %>%
+  correlation()
+
+mpg %>%
+  group_by(drv) %>%
+  summarise(avg_cty = mean(cty))
+
+glm1 = glm(cty ~ displ, data = mpg)
+summary(glm1)
+
+glm2 = glm(cty ~ displ + drv, data = mpg)
+summary(glm2)
+
+glm3 = glm(cty ~ displ + drv + class, data = mpg)
+summary(glm3)
+
+compare_models(glm1, glm2, glm3)
+compare_performance(glm1, glm2, glm3)
+
+compare_performance(glm1, glm2, glm3) %>% plot()
+
+glm4 = glm(cty ~ displ:cyl) # gives you the interaction between displ & cyl
+
+# displ + cyl + displ:cyl = displ*cyl
+
+mpg %>%
+  ggplot(aes(x = displ, y = cty)) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+mpg %>%
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ## cty = displ, cyl
+## build these three models (simple, additive, interaction)
+## predict the cty using each model
+
+
+mod1 = glm(cty ~ displ, data = mpg) # simple
+mod2 = glm(cty ~ displ + cyl, data = mpg) # additive
+mod3 = glm(cty ~ displ*cyl, data = mpg) # interaction
+  
+compare_performance(mod1, mod2, mod3) %>% plot()
+
+mpg %>%
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm')
+
+
+mpg2 <- mpg
+
+mpg2$pred1 = predict(mod1, mpg2)
+plot(mpg2$cty, mpg2$pred1)
+cor.test(mpg$displ, mpg$cty)
+
+mpg2$pred2 = predict(mod2, mpg2)
+mpg2$pred3 = predict(mod3, mpg2)
+
+mpg2 %>%
+  ggplot(aes(x = displ, y = pred1, color = factor(cyl))) + 
+  geom_point()
+
+mpg2 %>%
+  ggplot(aes(x = displ, y = pred2, color = factor(cyl))) + 
+  geom_point()
+
+mpg2 %>%
+  ggplot(aes(x = displ, y = pred3, color = factor(cyl))) + 
+  geom_point()
+
+
+
+View(mpg2)
+
+mpg_long = mpg2 %>%
+  pivot_longer(cols = c(pred1, pred2, pred3),   
+               names_to = "mod",
+               values_to = "prediction")
+
+View(mpg_long)
+
+mpg_long %>%
+  ggplot(aes(x = displ, y = prediction, color = factor(cyl))) +
+  geom_point() +
+  geom_smooth(method = 'glm') +
+  facet_wrap(~ mod)
+  
+# original vs. prediction graph
+mpg2 %>%
+  pivot_longer(starts_with('pred')) %>%
+  ggplot(aes(x = displ, y = cty, color = factor(cyl))) +
+  geom_point() +
+  geom_point(aes(y = value), color = 'black') +
+  facet_wrap(~ name)
+  
+
+## build your BEST model to predict cty
+
+mod_best = glm(cty ~ manufacturer*model*displ*year*drv*fl*class, data = mpg)
+
+library(MASS)
+
+
+step = stepAIC(mod_best)
+
+
+
+
